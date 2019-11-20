@@ -37,7 +37,7 @@ router.put("/:id", async(req, res, next) => {
             }
         });
         if (updateInfo[0]) {
-            res.status(200).send(await Person.findAll({where: {id: req.params.id}}));
+            res.status(201).send(await Person.findAll({where: {id: req.params.id}}));
         }
         else{
             res.status(400).send('In PUT request, status 400, incorrect');

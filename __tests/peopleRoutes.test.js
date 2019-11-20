@@ -116,21 +116,85 @@ describe('/api/people routes', () => {
       }
     });
   });
-  xdescribe('POST to /api/people', () => {
+  describe('POST to /api/people', () => {
     it('should create a new person and return that persons information if all the required information is given', async () => {
+
       // HINT: You will be sending data then checking response. No pre-seeding required
+      const sam = { name: 'Sam', isAttending: true };
+      const samAdded = await request(app).post('/api/people/').send(sam)
+
+
+      expect(samAdded.statusCode).toBe(200);
+      expect(samAdded.headers['content-type']).toEqual(
+          expect.stringContaining('json')
+          )
+      const newPerson = samAdded.body;
+      expect(newPerson).toEqual(expect.objectContaining(sam))
+
+      const apiSam = await Person.findAll({
+        where: {
+          name: sam.name,
+        }
+      })
+      expect(apiSam).toEqual([expect.objectContaining(sam)])
+
       // Make sure you test both the API response and whats inside the database anytime you create, update, or delete from the database
     });
-    it('should return status code 400 if missing required information', async () => {});
+    it('should return status code 400 if missing required information', async () => {
+      const blankName = { name:'', isAttending: false }
+      const blankResponse = await request(app).post('/api/people/').send(blankName)
+      expect(blankResponse.statusCode).toBe(400)
+    });
   });
 
-  xdescribe('PUT to /api/people/:id', () => {
-    it('should update a persons information', async () => {});
-    it('should return a 400 if given an invalid id', async () => {});
+  describe('PUT to /api/people/:id', () => {
+    it('should update a persons information', async () => {
+      const amol = { name: 'amol', isAttending: true }
+      const amoler = await Person.create(amol)
+      const amolResponse = await request(app).put(`/api/people/${amoler.id}`).send({ name: 'amol', isAttending: false })
+      //test API Response
+      expect(amolResponse.statusCode).toBe(201);
+      expect(amolResponse.headers['content-type']).toEqual(
+          expect.stringContaining('json')
+          );
+      const amolPerson = amolResponse.body[0]
+      expect(amolPerson.name).toEqual('amol')
+      expect(amolPerson.isAttending).toEqual(false)
+
+
+      const apiamol = await Person.findAll({
+        where: {
+          name: amol.name,
+        }
+      });
+      expect(apiamol[0].name).toEqual('amol')
+      expect(apiamol[0].isAttending).toEqual(false)
+    });
+    it('should return a 400 if given an invalid id', async () => {
+      const wrongUpdate = await request(app).put(`/api/people/23`)
+      .send({ name: 'amol', isAttending: true })
+      expect(wrongUpdate.statusCode).toBe(400)
+    });
   });
 
-  xdescribe('DELETE to /api/people/:id', () => {
-    it('should remove a person from the database', async () => {});
-    it('should return a 400 if given an invalid id', async () => {});
+  describe('DELETE to /api/people/:id', () => {
+    it('should remove a person from the database', async () => {
+      const jacob = { name: 'Jacob', isAttending: true }
+      let jacobPerson = await Person.create(jacob)
+      //test API Response
+      let result = await Person.findAll()
+      let jacobResult = result[0].dataValues
+      expect(jacobResult.name).toBe('Jacob')
+      const deleteJacob = await request(app).delete(`/api/people/${jacobPerson.id}`)
+      expect(deleteJacob.statusCode).toBe(200);
+      
+      let jacobDelete = await Person.findAll()
+      console.log(jacobDelete)
+      expect(jacobDelete).not.toEqual(expect.objectContaining(jacobResult))
+    });
+    it('should return a 400 if given an invalid id', async () => {
+      const deleteErr = await request(app).delete(`/api/people/23`)
+      expect(deleteErr.statusCode).toBe(400);
+    });
   });
 });
