@@ -74,24 +74,24 @@ describe('POST to /api/dishes/', () => {
   it('', async () => {
     //Use http://localhost:3000/ to make edits to database and change CRUD
     // HINT: You will be sending data then checking response. No pre-seeding required
-    const banana = { name: 'banana', description:'delicious yellow', spoiled: false }
-    const bananaResponse = await request(app).post('/api/dishes/').send(banana)
+    const ban = { name: 'ban', description:'delicious yellow', spoiled: false }
+    const banResponse = await request(app).post('/api/dishes/').send(ban)
 
-    expect(bananaResponse.statusCode).toBe(200);
-    expect(bananaResponse.headers['content-type']).toEqual(
+    expect(banResponse.statusCode).toBe(200);
+    expect(banResponse.headers['content-type']).toEqual(
         expect.stringContaining('json')
         )
-    const newDish = bananaResponse.body;
-    expect(newDish.name).toBe('banana')
+    const newDish = banResponse.body;
+    expect(newDish.name).toBe('ban')
     expect(newDish.description).toBe('delicious yellow')
     expect(newDish.spoiled).toBe(false)
 
-    const apiBanana = await Dish.findAll({
+    const apiban = await Dish.findAll({
       where: {
-        name: banana.name,
+        name: ban.name,
       }
     })
-    expect(apiBanana[0].name).toEqual('banana')
+    expect(apiban[0].name).toEqual('ban')
 
     // Make sure you test both the API response and whats inside the database anytime you create, update, or delete from the database
   });
@@ -104,31 +104,31 @@ describe('POST to /api/dishes/', () => {
 
     describe('PUT to /api/dishes/:id', () => {
       it('should update a persons information', async () => {
-        const potato = { name: 'potato', description: 'mashed potato', spoiled: false }
-        const potatoDish = await Dish.create(potato)
-        console.log(potatoDish.id)
-        const potatoRes = await request(app).put(`/api/dishes/${potatoDish.id}`).send({ name: 'potato', description: 'mashed potato', spoiled: true })
+        const mashed = { name: 'mashed', description: 'mashed mashed', spoiled: false }
+        const mashedDish = await Dish.create(mashed)
+        console.log(mashedDish.id)
+        const mashedRes = await request(app).put(`/api/dishes/${mashedDish.id}`).send({ name: 'mashed', description: 'mashed mashed', spoiled: true })
         //test API Response
-        expect(potatoRes.statusCode).toBe(200);
-        expect(potatoRes.headers['content-type']).toEqual(
+        expect(mashedRes.statusCode).toBe(200);
+        expect(mashedRes.headers['content-type']).toEqual(
             expect.stringContaining('json')
             );
-        const potatoResDish = potatoRes.body[0]
-        expect(potatoResDish.name).toEqual('potato')
-        expect(potatoResDish.description).toEqual('mashed potato')
-        expect(potatoResDish.spoiled).toEqual(true)
+        const mashedResDish = mashedRes.body[0]
+        expect(mashedResDish.name).toEqual('mashed')
+        expect(mashedResDish.description).toEqual('mashed mashed')
+        expect(mashedResDish.spoiled).toEqual(true)
   
-        const apiPotato = await Dish.findAll({
+        const apimashed = await Dish.findAll({
           where: {
-            name: potato.name,
+            name: mashed.name,
           }
         });
-        expect(apiPotato[0].name).toEqual('potato')
-        expect(apiPotato[0].spoiled).toEqual(true)
+        expect(apimashed[0].name).toEqual('mashed')
+        expect(apimashed[0].spoiled).toEqual(true)
       });
       it('should return a 400 if given an invalid id', async () => {
         const wrongUpdate = await request(app).put(`/api/dishes/23`)
-        .send({ name: 'potato', description: 'mashed potato', spoiled: false })
+        .send({ name: 'mashed', description: 'mashed mashed', spoiled: false })
         expect(wrongUpdate.statusCode).toBe(400)
       });
     });
