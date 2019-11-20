@@ -149,30 +149,30 @@ describe('/api/people routes', () => {
 
   describe('PUT to /api/people/:id', () => {
     it('should update a persons information', async () => {
-      const amol = { name: 'amol', isAttending: true }
-      const amoler = await Person.create(amol)
-      const amolResponse = await request(app).put(`/api/people/${amoler.id}`).send({ name: 'amol', isAttending: false })
+      const sam = { name: 'sam', isAttending: true }
+      const samer = await Person.create(sam)
+      const samResponse = await request(app).put(`/api/people/${samer.id}`).send({ name: 'sam', isAttending: false })
       //test API Response
-      expect(amolResponse.statusCode).toBe(201);
-      expect(amolResponse.headers['content-type']).toEqual(
+      expect(samResponse.statusCode).toBe(201);
+      expect(samResponse.headers['content-type']).toEqual(
           expect.stringContaining('json')
           );
-      const amolPerson = amolResponse.body[0]
-      expect(amolPerson.name).toEqual('amol')
-      expect(amolPerson.isAttending).toEqual(false)
+      const samPerson = samResponse.body[0]
+      expect(samPerson.name).toEqual('sam')
+      expect(samPerson.isAttending).toEqual(false)
 
 
-      const apiamol = await Person.findAll({
+      const apisam = await Person.findAll({
         where: {
-          name: amol.name,
+          name: sam.name,
         }
       });
-      expect(apiamol[0].name).toEqual('amol')
-      expect(apiamol[0].isAttending).toEqual(false)
+      expect(apisam[0].name).toEqual('sam')
+      expect(apisam[0].isAttending).toEqual(false)
     });
     it('should return a 400 if given an invalid id', async () => {
       const wrongUpdate = await request(app).put(`/api/people/23`)
-      .send({ name: 'amol', isAttending: true })
+      .send({ name: 'sam', isAttending: true })
       expect(wrongUpdate.statusCode).toBe(400)
     });
   });
